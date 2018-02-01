@@ -923,6 +923,14 @@ class TestFakeStrictRedis(unittest.TestCase):
         self.assertEqual(self.redis.sadd('foo', *range(3)), 3)
         self.assertEqual(self.redis.smembers('foo'), set([b'0', b'1', b'2']))
 
+    def test_sadd_as_str_object(self):
+        class _StrLike(object):
+            def __str__(self):
+                return 'imastring'
+
+        self.assertEqual(self.redis.sadd('foo', _StrLike()), 1)
+        self.assertEqual(self.redis.smembers('foo'), set([b'imastring']))
+
     def test_scan_single(self):
         self.redis.set('foo1', 'bar1')
         self.assertEqual(self.redis.scan(match="foo*"), (0, [b'foo1']))

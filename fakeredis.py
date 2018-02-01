@@ -50,7 +50,7 @@ if PY2:
     def to_native(x, charset=sys.getdefaultencoding(), errors='strict'):
         if x is None or isinstance(x, str):
             return x
-        return x.encode(charset, errors)
+        return to_bytes(x, charset, errors)
 
     iterkeys = lambda d: d.iterkeys()
     itervalues = lambda d: d.itervalues()
@@ -83,7 +83,9 @@ else:
     def to_native(x, charset=sys.getdefaultencoding(), errors='strict'):
         if x is None or isinstance(x, str):
             return x
-        return x.decode(charset, errors)
+        if hasattr(x, 'decode'):
+            return x.decode(charset, errors)
+        return str(x)
 
     iterkeys = lambda d: iter(d.keys())
     itervalues = lambda d: iter(d.values())
